@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:proicnec/constants/colors.dart';
 import 'package:proicnec/models/note.dart';
+import 'package:proicnec/pages/editNote_page.dart';
 
 class NotePage extends StatefulWidget{
   const NotePage({super.key});
@@ -14,13 +15,15 @@ class NotePage extends StatefulWidget{
 
 class _NotePageState extends State<NotePage> {
 
-  List<Note> filteredNotoes = [];
+  TextEditingController _searchController = TextEditingController();
+
+  List<Note> filteredNotes = [];
   bool sorted = false;
 
   @override
   void initSatate() {
     super.initState();
-      filteredNotoes = sampleNotes;
+      filteredNotes = sampleNotes;
   }
 
   List<Note> sortNotesByModifiedTime(List<Note> notes) {
@@ -43,17 +46,23 @@ class _NotePageState extends State<NotePage> {
 
   void onSearchTextChanged(String searchText) {
     setState(() {
-      filteredNotoes = sampleNotes.where((note) =>
-      note.content.toLowerCase().contains(searchText.toLowerCase()) ||
-      note.title.toLowerCase().contains(searchText.toLowerCase())).toList();
-    });
+    if (searchText.isEmpty) {
+      filteredNotes = sampleNotes;
+      return;
+    }
+    String query = searchText.trim().toLowerCase();
+
+    filteredNotes = sampleNotes.where((note) {
+      String title = note.title.toLowerCase();
+      return title.contains(query);
+    }).toList();
+  });
   }
 
-  void deleteNote(int index) {
+  void deleteNote(Note note) {
     setState(() {
-      Note note = filteredNotoes[index];
-      sampleNotes.remove(note);
-      filteredNotoes.removeAt(index);
+        sampleNotes.remove(note);
+    filteredNotes.remove(note);
     });
   }
 
@@ -75,7 +84,7 @@ class _NotePageState extends State<NotePage> {
                 IconButton(
                   onPressed: (){
                     setState(() {
-                      filteredNotoes = sortNotesByModifiedTime(filteredNotoes);
+                      filteredNotes = sortNotesByModifiedTime(filteredNotes);
                     });
                   },
                   padding: EdgeInsets.all(0),
@@ -98,6 +107,7 @@ class _NotePageState extends State<NotePage> {
             SizedBox(height: 20,),
 
             TextField(
+              controller: _searchController,
               onChanged: onSearchTextChanged,
               style: TextStyle(fontSize: 16, color: Colors.white),
               decoration: InputDecoration(
@@ -121,7 +131,7 @@ class _NotePageState extends State<NotePage> {
             Expanded(
               child: ListView.builder(
                 padding: const EdgeInsets.only(top: 30),
-                itemCount: filteredNotoes.length,
+                itemCount: filteredNotes.length,
                 itemBuilder:(context, index) {
                   return Card(
                     margin: const EdgeInsets.only(bottom: 20),
@@ -133,11 +143,38 @@ class _NotePageState extends State<NotePage> {
                   child: Padding(
                     padding: const EdgeInsets.all(10.0),
                     child: ListTile(
+                      onTap: () async {
+                        final result = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (BuildContext context) => EditnotePage(note: filteredNotes[index]),
+                          ), 
+                        );
+                        if (result != null) {
+                          setState(() {
+                            int originalIndex = sampleNotes.indexOf(filteredNotes[index]);
+
+                            sampleNotes[originalIndex] = Note(
+                              id: sampleNotes[originalIndex].id,
+                              title: result[0],
+                              content: result[1],
+                              modifiedTime: DateTime.now()
+                            );
+
+                             filteredNotes[index] = Note(
+                              id: filteredNotes[index].id,
+                              title: result[0],
+                              content: result[1],
+                              modifiedTime: DateTime.now()
+                            );
+                          });
+                        }
+                      },
                       title: RichText(
                         maxLines: 3, // mostrar las primeras 3 lineas
                         overflow: TextOverflow.ellipsis, // mostrar 3 puntos cuando llega al maximo de pantalla 
                         text: TextSpan(
-                          text: "${sampleNotes[index].title} :\n",
+                          text: "${filteredNotes[index].title} :\n",
                           style: TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.bold,
@@ -145,7 +182,7 @@ class _NotePageState extends State<NotePage> {
                             height: 1.5),
                             children: [
                               TextSpan(
-                                text: sampleNotes[index].content,
+                                text: filteredNotes[index].content,
                                 style: TextStyle(
                                   color: Colors.black,
                                   fontWeight: FontWeight.normal,
@@ -158,7 +195,7 @@ class _NotePageState extends State<NotePage> {
                       subtitle: Padding(
                         padding: const EdgeInsets.only(top: 8.0),
                         child: Text(
-                          "Edited: ${DateFormat('EEE MMM d, yyyy h:mm a').format(filteredNotoes[index].modifiedTime)}",
+                          "Edited: ${DateFormat('EEE MMM d, yyyy h:mm a').format(filteredNotes[index].modifiedTime)}",
                           style: TextStyle(
                             fontSize: 10,
                             fontStyle: FontStyle.italic,
@@ -169,7 +206,7 @@ class _NotePageState extends State<NotePage> {
                         onPressed: () async{
                           final result = await confirmDialog(context);
                             if (result!= null && result) {
-                              deleteNote(index);
+                              deleteNote(filteredNotes[index]); 
                             }
                         },
                         icon: const Icon(
@@ -185,7 +222,34 @@ class _NotePageState extends State<NotePage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () async {
+          final result = await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (BuildContext context) => const EditnotePage(),
+            ), 
+          );
+
+          _searchController.clear();
+
+          if (result != null) {
+            setState(() {
+              sampleNotes.add(Note(
+                id: sampleNotes.length,
+                title: result[0],
+                content: result[1],
+                modifiedTime: DateTime.now()
+              ));
+              filteredNotes = sampleNotes;
+              _searchController.clear(); 
+            });
+          } else {
+            setState(() {
+              filteredNotes = sampleNotes; 
+            });
+          }
+
+        },
         elevation: 10,
         backgroundColor: Colors.grey.shade800,
         child: const Icon(
