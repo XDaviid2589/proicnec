@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:proicnec/auth/auth_gate.dart';
 import 'package:proicnec/nav/curved_navigation.dart';
+import 'package:proicnec/pages/note_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
@@ -19,6 +20,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: curved_navigation());
+    return const MaterialApp(home: NotePage());
   }
 }
