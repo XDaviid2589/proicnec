@@ -21,7 +21,7 @@ class _NotePageState extends State<NotePage> {
   bool sorted = false;
 
   @override
-  void initSatate() {
+  void initState() {
     super.initState();
       filteredNotes = sampleNotes;
   }
@@ -135,7 +135,7 @@ class _NotePageState extends State<NotePage> {
                 itemBuilder:(context, index) {
                   return Card(
                     margin: const EdgeInsets.only(bottom: 20),
-                  color: getRandomColor(),
+                  color: filteredNotes[index].color,
                   elevation: 3,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10)
@@ -158,14 +158,16 @@ class _NotePageState extends State<NotePage> {
                               id: sampleNotes[originalIndex].id,
                               title: result[0],
                               content: result[1],
-                              modifiedTime: DateTime.now()
+                              modifiedTime: DateTime.now(),
+                              color: result[2],
                             );
 
                              filteredNotes[index] = Note(
                               id: filteredNotes[index].id,
                               title: result[0],
                               content: result[1],
-                              modifiedTime: DateTime.now()
+                              modifiedTime: DateTime.now(),
+                              color: result[2],
                             );
                           });
                         }
@@ -238,7 +240,8 @@ class _NotePageState extends State<NotePage> {
                 id: sampleNotes.length,
                 title: result[0],
                 content: result[1],
-                modifiedTime: DateTime.now()
+                modifiedTime: DateTime.now(),
+                color: result[2],
               ));
               filteredNotes = sampleNotes;
               _searchController.clear(); 
