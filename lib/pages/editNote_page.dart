@@ -76,7 +76,7 @@ class _EditnotePageState extends State<EditnotePage> {
                         child: Wrap(
                           spacing: 12,
                           runSpacing: 12,
-                          children: backgroundColors.map((color) {
+                          children: allBackgroundColors.map((color) {
                             return GestureDetector(
                               onTap: () {
                                 setState(() {
@@ -144,8 +144,8 @@ class _EditnotePageState extends State<EditnotePage> {
        onPressed: () {
         final title = _titleController.text.trim();
         final content = _contentController.text;
-        final color = selectedColor ?? (backgroundColors.isNotEmpty
-            ? backgroundColors[math.Random().nextInt(backgroundColors.length)]
+        final color = selectedColor ?? (allBackgroundColors.isNotEmpty
+            ? allBackgroundColors[math.Random().nextInt(allBackgroundColors.length)]
             : Colors.grey);
 
         // Validación: título no puede estar vacío

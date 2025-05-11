@@ -18,35 +18,57 @@ class _RegisterPageState extends State<RegisterPage> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
-  // sign up button pressed
   void signUp() async {
-    // prepare data
     final email = _emailController.text;
     final password = _passwordController.text;
     final confirmPassword = _confirmPasswordController.text;
 
-    // check that passwords match
     if (password != confirmPassword) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("Passwords don't match")));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Passwords don't match")));
       return;
     }
 
-    // attempt sign p
     try {
       await authService.signUpWithEmailPassword(email, password);
-
-      // pop this register page
-      Navigator.pop(context);
+      if (mounted) {
+        Navigator.of(context).pushReplacementNamed("/home");
+      }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text("Error: $e")));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error: $e")));
       }
     }
   }
+
+  // sign up button pressed
+  // void signUp() async {
+  //   // prepare data
+  //   final email = _emailController.text;
+  //   final password = _passwordController.text;
+  //   final confirmPassword = _confirmPasswordController.text;
+
+  //   // check that passwords match
+  //   if (password != confirmPassword) {
+  //     ScaffoldMessenger.of(
+  //       context,
+  //     ).showSnackBar(const SnackBar(content: Text("Passwords don't match")));
+  //     return;
+  //   }
+
+  //   // attempt sign p
+  //   try {
+  //     await authService.signUpWithEmailPassword(email, password);
+
+  //     // pop this register page
+  //     Navigator.pop(context);
+  //   } catch (e) {
+  //     if (mounted) {
+  //       ScaffoldMessenger.of(
+  //         context,
+  //       ).showSnackBar(SnackBar(content: Text("Error: $e")));
+  //     }
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {

@@ -18,25 +18,41 @@ class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
-  // login button pressed
   void login() async {
-    // prepare data
     final email = _emailController.text;
     final password = _passwordController.text;
 
-    // attempt login..
     try {
       await authService.signInWithEmailPassword(email, password);
-    }
-    // catch any errors
-    catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text("Error: $e")));
+        Navigator.of(context).pushReplacementNamed("/home");
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error: $e")));
       }
     }
   }
+
+  // login button pressed
+  // void login() async {
+  //   // prepare data
+  //   final email = _emailController.text;
+  //   final password = _passwordController.text;
+
+  //   // attempt login..
+  //   try {
+  //     await authService.signInWithEmailPassword(email, password);
+  //   }
+  //   // catch any errors
+  //   catch (e) {
+  //     if (mounted) {
+  //       ScaffoldMessenger.of(
+  //         context,
+  //       ).showSnackBar(SnackBar(content: Text("Error: $e")));
+  //     }
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {

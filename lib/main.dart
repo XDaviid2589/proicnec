@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:proicnec/auth/auth_gate.dart';
 import 'package:proicnec/nav/curved_navigation.dart';
+import 'package:proicnec/pages/home_page.dart';
+import 'package:proicnec/pages/login_page.dart';
 import 'package:proicnec/pages/note_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:proicnec/utils/theme_controller.dart';
+
+final themeController = ThemeController(); // instancia global
 
 void main() async {
   //supabase setup
@@ -20,9 +25,22 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: NotePage()
+    themeController.checkAutoUpdate();
+    return AnimatedBuilder(
+      animation: themeController,
+      builder: (context, _) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData.light(),
+          darkTheme: ThemeData.dark(),
+          themeMode: themeController.themeMode,
+          initialRoute: "/login",
+          routes: {
+            "/login": (_) => const LoginPage(),
+            "/home": (_) => HomePage(themeController: themeController),
+          },
+        );
+      },
     );
   }
 }
