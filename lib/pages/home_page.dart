@@ -43,7 +43,10 @@ class _HomePageState extends State<HomePage> {
       child: Column(
         children: [
           const SizedBox(height: 40),
-          const Text("Home", style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+          const Text(
+            "Home",
+            style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+          ),
           const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -54,11 +57,9 @@ class _HomePageState extends State<HomePage> {
                   Switch(
                     value: widget.themeController.autoModeEnabled,
                     onChanged: (val) {
-                      setState(() {
-                        val
-                            ? widget.themeController.enableAutoMode()
-                            : widget.themeController.disableAutoMode();
-                      });
+                      val
+                          ? widget.themeController.enableAutoMode()
+                          : widget.themeController.disableAutoMode();
                     },
                   ),
                 ],
@@ -69,9 +70,7 @@ class _HomePageState extends State<HomePage> {
                   Switch(
                     value: widget.themeController.themeMode == ThemeMode.dark,
                     onChanged: (_) {
-                      setState(() {
-                        widget.themeController.toggleTheme();
-                      });
+                      widget.themeController.toggleTheme();
                     },
                   ),
                 ],
@@ -83,7 +82,7 @@ class _HomePageState extends State<HomePage> {
             onPressed: _logout,
             icon: const Icon(Icons.logout),
             label: const Text("Cerrar sesión"),
-          )
+          ),
         ],
       ),
     );
