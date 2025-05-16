@@ -25,10 +25,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    themeController.checkAutoUpdate();
     return AnimatedBuilder(
       animation: themeController,
       builder: (context, _) {
+        themeController.checkAutoUpdate(); // ✅ MUÉVELO AQUÍ
+
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           theme: ThemeData.light(),

@@ -15,19 +15,42 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final authService = AuthService();
-
   int _selectedIndex = 0;
 
-  final List<Widget> _pages = [];
-
   @override
-  void initState() {
-    super.initState();
-    _pages.addAll([
-      _buildMainScreen(),
-      NotePage(themeController: widget.themeController),
-      const ProfilePage(),
-    ]);
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: widget.themeController,
+      builder: (context, _) {
+        return Scaffold(
+          body: _getPageAtIndex(_selectedIndex),
+          bottomNavigationBar: CurvedNavigationBar(
+            index: _selectedIndex,
+            onTap: (index) => setState(() => _selectedIndex = index),
+            color: Colors.blue,
+            backgroundColor: Colors.transparent,
+            items: const [
+              Icon(Icons.home, color: Colors.white),
+              Icon(Icons.note, color: Colors.white),
+              Icon(Icons.person, color: Colors.white),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _getPageAtIndex(int index) {
+    switch (index) {
+      case 0:
+        return _buildMainScreen();
+      case 1:
+        return NotePage(themeController: widget.themeController);
+      case 2:
+        return const ProfilePage();
+      default:
+        return const Center(child: Text("Página no encontrada"));
+    }
   }
 
   void _logout() async {
@@ -57,9 +80,11 @@ class _HomePageState extends State<HomePage> {
                   Switch(
                     value: widget.themeController.autoModeEnabled,
                     onChanged: (val) {
-                      val
-                          ? widget.themeController.enableAutoMode()
-                          : widget.themeController.disableAutoMode();
+                      if (val) {
+                        widget.themeController.enableAutoMode();
+                      } else {
+                        widget.themeController.disableAutoMode();
+                      }
                     },
                   ),
                 ],
@@ -83,24 +108,6 @@ class _HomePageState extends State<HomePage> {
             icon: const Icon(Icons.logout),
             label: const Text("Cerrar sesión"),
           ),
-        ],
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: _pages[_selectedIndex],
-      bottomNavigationBar: CurvedNavigationBar(
-        index: _selectedIndex,
-        onTap: (index) => setState(() => _selectedIndex = index),
-        color: Colors.blue,
-        backgroundColor: Colors.transparent,
-        items: const [
-          Icon(Icons.home, color: Colors.white),
-          Icon(Icons.note, color: Colors.white),
-          Icon(Icons.person, color: Colors.white),
         ],
       ),
     );
